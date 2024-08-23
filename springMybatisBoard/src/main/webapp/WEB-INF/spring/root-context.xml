@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 모델과 관련된 객체들을 관리하게 만든다. dispatcher servlet과는 관련 없음 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--repository, service 컴포넌트 스캔 -->
+    <context:component-scan
+            base-package="org.example.springMybatisBoard.model.repository, org.example.springMybatisBoard.model.service"/>
+
+    <!--데이터베이스 커넥션 관리(POOL) -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/board"/>
+        <property name="username" value="root"/>
+        <property name="password" value="11111111"/>
+    </bean>
+
+    <!--Mybatis 연동 -->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- classpath: 는 자동으로 resources폴더를 잡음, mapper xml을 읽어옴-->
+        <property name="mapperLocations" value="classpath:/mappers/*.xml"/>
+    </bean>
+
+    <!--mapping되는 인터페이스는 여기서 읽어옴-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.example.springMybatisBoard.model.repository"/>
+    </bean>
+</beans>
