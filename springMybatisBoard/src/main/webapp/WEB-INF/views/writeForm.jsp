@@ -52,14 +52,17 @@
     </style>
 </head>
 <body>
-<form action="<%= request.getContextPath() %>/board/write" method="post">
+<form action="<%= request.getContextPath() %>/board/write" method="post" enctype="multipart/form-data">
     <div><strong>제목:</strong></div>
     <input type="text" placeholder="제목을 입력하세요." name="title" required /><br/>
     <div><strong>작성자:</strong></div>
     <input type="text" name="writer" value="<%=session.getAttribute("memberId")%>" readonly /><br/>
     <div><strong>내용:</strong></div>
     <textarea placeholder="내용을 입력하세요." name="content" rows="10" required></textarea><br/>
+    <input type="file" name="uploadFile"/><br/>
+    <input type="file" name="uploadFile"/><br/>
     <input type="submit" value="작성완료" />
+
 </form>
 </body>
 </html>

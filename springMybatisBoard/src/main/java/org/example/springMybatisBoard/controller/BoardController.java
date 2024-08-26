@@ -2,15 +2,22 @@ package org.example.springMybatisBoard.controller;
 
 import org.example.springMybatisBoard.global.AlertException;
 import org.example.springMybatisBoard.model.dto.BoardDTO;
+import org.example.springMybatisBoard.model.dto.FileDTO;
 import org.example.springMybatisBoard.model.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-import static org.example.springMybatisBoard.global.AlertType.*;
+import static org.example.springMybatisBoard.global.AlertType.NO_AUTHORIZATION;
 
 @Controller
 @RequestMapping("/board")
@@ -18,14 +25,15 @@ public class BoardController {
 
     private final BoardService boardService;
 
+
     @Autowired
     public BoardController(BoardService boardService) {
         this.boardService = boardService;
     }
 
     @GetMapping("/list")
-    public String getBoardList(Model model) throws SQLException {
-        model.addAttribute("boardList", boardService.getBoards());
+    public String getBoardList(Model model, @RequestParam(defaultValue = "1", value = "page") int page) throws SQLException {
+        model.addAttribute("pageData", boardService.getBoards(page));
         return "list";
     }
 
@@ -36,11 +44,13 @@ public class BoardController {
 
     @PostMapping("/write")
     public String write(@SessionAttribute("memberId") String memberId,
-                        @ModelAttribute BoardDTO boardDTO) throws SQLException {
-        int boardId = boardService.write(memberId, boardDTO);
-
+                        @ModelAttribute BoardDTO boardDTO,
+                        @RequestPart(name = "file", required = false) MultipartFile[] uploadFile
+    ) throws SQLException, IOException {
+        int boardId = boardService.write(memberId, boardDTO,uploadFile);
         return "redirect:/board/" + boardId;
     }
+
 
     @GetMapping("/{bno}")
     public String getBoardDetail(@PathVariable("bno") int bno, Model model) throws SQLException {
@@ -59,7 +69,7 @@ public class BoardController {
 
         BoardDTO board = boardService.getBoard(bno);
 
-        if(!boardService.checkWriter(memberId, board.getWriter())) {
+        if (!boardService.checkWriter(memberId, board.getWriter())) {
             throw new AlertException(NO_AUTHORIZATION);
         }
 

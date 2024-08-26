@@ -7,6 +7,7 @@
 --%>
 <%@ page import="java.util.List" %>
 <%@ page import="org.example.springMybatisBoard.model.dto.BoardDTO" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -61,7 +62,9 @@
     </thead>
     <tbody>
     <%
-        List<BoardDTO> bList = (List<BoardDTO>) request.getAttribute("boardList");
+        Map<String, Object> pageData = (Map<String, Object>) request.getAttribute("pageData");
+        List<BoardDTO> bList = (List<BoardDTO>) pageData.get("boardList");
+
         if (bList != null) {
             for (BoardDTO b : bList) {
     %>
@@ -84,6 +87,36 @@
     %>
     </tbody>
 </table>
+<div class="pagination">
+    <%
+        int startPage = (int) pageData.get("startPage");
+        int endPage = (int) pageData.get("endPage");
+        int totalPageCount = (int) pageData.get("totalPageCount");
+        int currentPage = (int) pageData.get("currentPage");
+
+        if (startPage > 1) {
+    %>
+    <a href="<%= request.getContextPath() %>/board/list?page=<%= startPage - 1 %>">&laquo; 이전</a>
+    <%
+        }
+        for (int i = startPage; i <= endPage; i++) {
+            if (i == currentPage) {
+    %>
+    <a href="#" class="active"><%= i %></a>
+    <%
+    } else {
+    %>
+    <a href="<%= request.getContextPath() %>/board/list?page=<%= i %>"><%= i %></a>
+    <%
+            }
+        }
+        if (endPage < totalPageCount) {
+    %>
+    <a href="<%= request.getContextPath() %>/board/list?page=<%= endPage + 1 %>">다음 &raquo;</a>
+    <%
+        }
+    %>
+</div>
 <a href="<%= request.getContextPath() %>/board/write">
     <button type="button">게시글 작성하러 가기</button>
 </a>

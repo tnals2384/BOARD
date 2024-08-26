@@ -11,7 +11,8 @@
         <result property="regDate" column="reg_date"/>
     </resultMap>
 
-    <insert id="insert" parameterType="org.example.springMybatisBoard.model.dto.BoardDTO">
+    <insert id="insert" parameterType="org.example.springMybatisBoard.model.dto.BoardDTO"
+            useGeneratedKeys="true" keyProperty="no" keyColumn="no">
         INSERT INTO BOARD_TB(TITLE, WRITER, CONTENT, REG_DATE)
         VALUES (#{title}, #{writer}, #{content}, NOW())
     </insert>
@@ -29,6 +30,10 @@
         DELETE FROM BOARD_TB WHERE NO = #{no}
     </delete>
 
+    <select id="selectList" parameterType="int" resultMap="boardResultMap">
+        SELECT NO, TITLE, WRITER, CONTENT, READ_COUNT, REG_DATE FROM BOARD_TB ORDER BY REG_DATE DESC LIMIT #{sr}, #{cnt}
+    </select>
+
     <!--resultMap을 이용해 결과 받아오기 -->
     <select id="selectOne" parameterType="int" resultMap="boardResultMap">
         SELECT NO,TITLE,WRITER,CONTENT,READ_COUNT,REG_DATE FROM BOARD_TB WHERE NO = #{no}
@@ -37,6 +42,9 @@
     <!-- alias 사용해서 이름 맞춰줄수도 있다.-->
     <select id="selectAll" resultType="org.example.springMybatisBoard.model.dto.BoardDTO">
         SELECT NO,TITLE, WRITER, READ_COUNT as 'readCount', REG_DATE as 'regDate' FROM BOARD_TB
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM BOARD_TB
     </select>
 
     <update id="updateReadCount">
