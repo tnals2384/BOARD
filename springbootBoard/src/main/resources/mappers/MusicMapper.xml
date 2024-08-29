@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.springbootBoard.model.repository.MusicMapper">
+    <resultMap id="musicResultMap" type="org.example.springbootBoard.model.dto.MusicDTO">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="artist" column="artist"/>
+        <result property="releaseYear" column="release_Year"/>
+       <result property="albumCover" column="album_cover"/>
+        <result property="description" column="description"/>
+        <result property="musicLink" column="youtube"/>
+        <result property="member" column="member_id" />
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    <insert id="insert" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="org.example.springbootBoard.model.dto.MusicDTO">
+        INSERT INTO MUSIC(title, artist, release_year, youtube, description, album_cover, member_id) VALUES (#{title}, #{artist}, #{releaseYear}, #{musicLink}, #{description}, #{albumCover},#{member})
+    </insert>
+
+    <select id="getMusicCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM MUSIC
+    </select>
+    <select id="selectMusicListByPage" resultMap="musicResultMap">
+        SELECT * FROM MUSIC ORDER BY CREATED_AT LIMIT #{page}, #{size}
+    </select>
+    <select id="selectMusic" resultMap="musicResultMap">
+        SELECT * FROM MUSIC WHERE id = #{musicId}
+    </select>
+</mapper>
